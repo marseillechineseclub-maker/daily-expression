@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expression - Learn English Every Day</title>
+    <style>
+        :root {
+            --bg-cream: #FAF9F6;
+            --bg-white: #FFFFFF;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --text-light: #999999;
+            --accent-sage: #8BA888;
+            --accent-sage-light: #a8c4a5;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        header {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-sage);
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .streak {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .streak-number {
+            font-weight: 600;
+            color: var(--accent-sage);
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-medium);
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .settings-btn:hover {
+            color: var(--accent-sage);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            padding: 3.5rem;
+            max-width: 700px;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .expression {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .meaning {
+            font-size: 1.1rem;
+            color: var(--text-medium);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-cream);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-sage);
+        }
+
+        .examples {
+            margin-bottom: 2.5rem;
+        }
+
+        .examples-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .example {
+            font-size: 1rem;
+            color: var(--text-medium);
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .example::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-sage);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent-sage);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-sage-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: var(--bg-cream);
+            color: var(--text-medium);
+        }
+
+        .btn-secondary:hover {
+            background: #f0efec;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--accent-sage);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-cream);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-track {
+            height: 6px;
+            background: #e8e8e8;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-sage);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow-md);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--accent-sage);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .notification-badge {
+            display: inline-block;
+            background: var(--accent-sage);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                padding: 2rem;
+            }
+
+            .expression {
+                font-size: 2rem;
+            }
+
+            header {
+                margin-bottom: 1rem;
+            }
+
+            .streak {
+                font-size: 0.85rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .expression {
+                font-size: 1.75rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">📚 Daily Expression</div>
+        <div class="header-right">
+            <div class="streak">
+                <span id="streakDisplay">🔥 <span class="streak-number">0</span> day streak</span>
+            </div>
+            <button class="settings-btn" id="settingsBtn" aria-label="Settings">⚙️</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="date" id="dateDisplay"></div>
+            <h1 class="expression" id="expressionText"></h1>
+            <div class="meaning" id="meaningText"></div>
+            <div class="examples">
+                <div class="examples-title">Examples</div>
+                <div id="examplesContainer"></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="learnedBtn">Mark as Learned ✓</button>
+                <button class="btn btn-secondary" id="reviewBtn">Review Later</button>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn">← Previous</button>
+                <button class="nav-btn" id="nextBtn">Next →</button>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-info">
+                    <span id="learnedCount">0 expressions learned</span>
+                    <span id="totalCount">0 total</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2 class="modal-header">Settings</h2>
+
+            <div class="modal-section">
+                <label class="modal-label" for="notificationTime">Daily Reminder Time</label>
+                <input type="time" id="notificationTime" class="modal-input" value="09:00">
+            </div>
+
+            <div class="modal-section">
+                <label class="modal-label">Browser Notifications</label>
+                <button class="btn btn-secondary" id="enableNotifications" style="width: 100%;">
+                    Enable Notifications
+                </button>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+                <button class="btn btn-secondary" id="closeModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA ====================
+        const expressions = [
+            {
+                expression: "Break the ice",
+                meaning: "To initiate conversation in a social setting, especially to make people feel more comfortable.",
+                examples: [
+                    "I told a joke to break the ice at the beginning of the meeting.",
+                    "Playing a fun game can help break the ice at parties.",
+                    "She's great at breaking the ice with new clients."
+                ]
+            },
+            {
+                expression: "Hit the nail on the head",
+                meaning: "To describe exactly what is causing a situation or problem; to be exactly right about something.",
+                examples: [
+                    "You hit the nail on the head when you said the project needed better planning.",
+                    "Her analysis hit the nail on the head - that's precisely our problem.",
+                    "I think you've hit the nail on the head with that suggestion."
+                ]
+            },
+            {
+                expression: "Piece of cake",
+                meaning: "Something very easy to do; a task that requires little effort.",
+                examples: [
+                    "The exam was a piece of cake - I finished in 30 minutes.",
+                    "Don't worry, installing this software is a piece of cake.",
+                    "For an experienced chef, making this dish is a piece of cake."
+                ]
+            },
+            {
+                expression: "Under the weather",
+                meaning: "Feeling ill or unwell; not in good health.",
+                examples: [
+                    "I'm feeling a bit under the weather today, so I'll work from home.",
+                    "She's been under the weather all week with a cold.",
+                    "If you're under the weather, you should get some rest."
+                ]
+            },
+            {
+                expression: "Cost an arm and a leg",
+                meaning: "To be very expensive; to cost a lot of money.",
+                examples: [
+                    "That new car must have cost him an arm and a leg!",
+                    "The repairs to the house cost an arm and a leg.",
+                    "Designer clothes can cost an arm and a leg."
+                ]
+            },
+            {
+                expression: "Bite the bullet",
+                meaning: "To force yourself to do something unpleasant or difficult that you have been avoiding.",
+                examples: [
+                    "I finally bit the bullet and went to the dentist.",
+                    "We need to bite the bullet and have that difficult conversation.",
+                    "Sometimes you just have to bite the bullet and make tough decisions."
+                ]
+            },
+            {
+                expression: "Spill the beans",
+                meaning: "To reveal secret information, often unintentionally or prematurely.",
+                examples: [
+                    "Don't spill the beans about the surprise party!",
+                    "He accidentally spilled the beans about the company merger.",
+                    "I can't believe she spilled the beans about our vacation plans."
+                ]
+            },
+            {
+                expression: "Let the cat out of the bag",
+                meaning: "To accidentally reveal a secret or surprise.",
+                examples: [
+                    "I let the cat out of the bag about their engagement.",
+                    "Someone let the cat out of the bag about the new product launch.",
+                    "Try not to let the cat out of the bag before the announcement."
+                ]
+            },
+            {
+                expression: "The ball is in your court",
+                meaning: "It's your turn to take action or make a decision; the responsibility is now yours.",
+                examples: [
+                    "I've made my offer, so now the ball is in your court.",
+                    "We've given you all the information - the ball is in your court.",
+                    "After the interview, the ball is in their court to make a decision."
+                ]
+            },
+            {
+                expression: "Blessing in disguise",
+                meaning: "Something that seems bad at first but turns out to be beneficial.",
+                examples: [
+                    "Losing that job was a blessing in disguise - I found a much better one!",
+                    "The flight delay was a blessing in disguise; we avoided a storm.",
+                    "Missing that meeting was a blessing in disguise."
+                ]
+            },
+            {
+                expression: "Once in a blue moon",
+                meaning: "Very rarely; almost never.",
+                examples: [
+                    "I only eat fast food once in a blue moon.",
+                    "We see each other once in a blue moon since she moved away.",
+                    "He cleans his room once in a blue moon."
+                ]
+            },
+            {
+                expression: "The best of both worlds",
+                meaning: "A situation where you can enjoy two different opportunities or benefits at the same time.",
+                examples: [
+                    "Working from home gives me the best of both worlds - professional growth and family time.",
+                    "This hybrid car offers the best of both worlds: efficiency and performance.",
+                    "Living in the suburbs gives you the best of both worlds - nature and city access."
+                ]
+            },
+            {
+                expression: "Call it a day",
+                meaning: "To stop working on something; to decide that you have done enough.",
+                examples: [
+                    "We've been working for 10 hours - let's call it a day.",
+                    "I'm exhausted, I think I'll call it a day.",
+                    "After finishing the report, they decided to call it a day."
+                ]
+            },
+            {
+                expression: "Cut corners",
+                meaning: "To do something in the easiest or cheapest way, often sacrificing quality.",
+                examples: [
+                    "Don't cut corners when it comes to safety.",
+                    "They cut corners during construction, and now there are problems.",
+                    "We can save money, but we shouldn't cut corners on quality."
+                ]
+            },
+            {
+                expression: "Get out of hand",
+                meaning: "To become difficult to control or manage.",
+                examples: [
+                    "The party got out of hand when too many people showed up.",
+                    "If we don't address this now, it could get out of hand.",
+                    "The argument got out of hand very quickly."
+                ]
+            },
+            {
+                expression: "Go the extra mile",
+                meaning: "To make more effort than is expected of you; to do more than necessary.",
+                examples: [
+                    "She always goes the extra mile to help her customers.",
+                    "If you want to stand out, you need to go the extra mile.",
+                    "The team went the extra mile to finish the project on time."
+                ]
+            },
+            {
+                expression: "Hit the sack",
+                meaning: "To go to bed; to go to sleep.",
+                examples: [
+                    "I'm exhausted - I'm going to hit the sack early tonight.",
+                    "After the long flight, I just wanted to hit the sack.",
+                    "It's midnight, time to hit the sack."
+                ]
+            },
+            {
+                expression: "Keep your chin up",
+                meaning: "To remain cheerful and optimistic in difficult circumstances; don't be discouraged.",
+                examples: [
+                    "I know it's tough, but keep your chin up!",
+                    "Keep your chin up - things will get better.",
+                    "She told him to keep his chin up during the challenging times."
+                ]
+            },
+            {
+                expression: "On cloud nine",
+                meaning: "Extremely happy; in a state of bliss.",
+                examples: [
+                    "She's been on cloud nine since she got engaged.",
+                    "I was on cloud nine when I heard I got the job!",
+                    "Winning the award put him on cloud nine."
+                ]
+            },
+            {
+                expression: "Pull yourself together",
+                meaning: "To calm down and regain control of your emotions; to get organized.",
+                examples: [
+                    "Pull yourself together - we have a presentation in 10 minutes.",
+                    "After the shock, she pulled herself together and continued.",
+                    "You need to pull yourself together and focus."
+                ]
+            },
+            {
+                expression: "See eye to eye",
+                meaning: "To agree with someone; to have the same opinion.",
+                examples: [
+                    "We don't always see eye to eye, but we respect each other.",
+                    "The partners finally see eye to eye on the business strategy.",
+                    "It's difficult when you don't see eye to eye with your manager."
+                ]
+            },
+            {
+                expression: "Sit on the fence",
+                meaning: "To avoid making a decision or choice; to remain neutral.",
+                examples: [
+                    "Stop sitting on the fence and make a decision!",
+                    "He's sitting on the fence about which job offer to accept.",
+                    "Politicians often sit on the fence on controversial issues."
+                ]
+            },
+            {
+                expression: "Take it with a grain of salt",
+                meaning: "To not take something too seriously; to be skeptical about something.",
+                examples: [
+                    "He exaggerates a lot, so take what he says with a grain of salt.",
+                    "Take online reviews with a grain of salt.",
+                    "I'd take that rumor with a grain of salt until it's confirmed."
+                ]
+            },
+            {
+                expression: "The elephant in the room",
+                meaning: "An obvious problem or difficult situation that people avoid talking about.",
+                examples: [
+                    "Let's address the elephant in the room - our sales are down 30%.",
+                    "The elephant in the room was his recent scandal.",
+                    "We can't ignore the elephant in the room any longer."
+                ]
+            },
+            {
+                expression: "Throw in the towel",
+                meaning: "To give up; to admit defeat.",
+                examples: [
+                    "After three failed attempts, he finally threw in the towel.",
+                    "Don't throw in the towel - you're so close to success!",
+                    "Many businesses threw in the towel during the recession."
+                ]
+            },
+            {
+                expression: "Up in the air",
+                meaning: "Uncertain; not yet decided or settled.",
+                examples: [
+                    "Our vacation plans are still up in the air.",
+                    "The future of the project is up in the air right now.",
+                    "Everything is up in the air until we hear back from them."
+                ]
+            },
+            {
+                expression: "Weather the storm",
+                meaning: "To survive a difficult period or situation.",
+                examples: [
+                    "The company managed to weather the storm of the economic crisis.",
+                    "We'll weather the storm together as a family.",
+                    "Small businesses struggled to weather the storm of the pandemic."
+                ]
+            },
+            {
+                expression: "When pigs fly",
+                meaning: "Something that will never happen; expressing impossibility.",
+                examples: [
+                    "He'll clean his room when pigs fly!",
+                    "When pigs fly, she'll admit she was wrong.",
+                    "I'll wake up early voluntarily when pigs fly."
+                ]
+            },
+            {
+                expression: "You can say that again",
+                meaning: "I completely agree with you; that's very true.",
+                examples: [
+                    "\"This coffee is amazing!\" \"You can say that again!\"",
+                    "\"It's been a long week.\" \"You can say that again.\"",
+                    "\"This project is challenging.\" \"You can say that again!\""
+                ]
+            },
+            {
+                expression: "Your guess is as good as mine",
+                meaning: "I don't know any more than you do; I have no idea.",
+                examples: [
+                    "\"When will the meeting start?\" \"Your guess is as good as mine.\"",
+                    "Your guess is as good as mine about what he'll decide.",
+                    "\"Who's responsible?\" \"Your guess is as good as mine.\""
+                ]
+            },
+            {
+                expression: "Burn the midnight oil",
+                meaning: "To work late into the night; to stay up late working.",
+                examples: [
+                    "I had to burn the midnight oil to finish the report.",
+                    "Students often burn the midnight oil before exams.",
+                    "She's been burning the midnight oil on this project."
+                ]
+            },
+            {
+                expression: "Get your act together",
+                meaning: "To organize yourself and start behaving more responsibly or efficiently.",
+                examples: [
+                    "You need to get your act together if you want to pass this course.",
+                    "The company needs to get its act together before the investors arrive.",
+                    "Get your act together - the deadline is tomorrow!"
+                ]
+            },
+            {
+                expression: "Jump on the bandwagon",
+                meaning: "To join others in doing something that is currently popular or fashionable.",
+                examples: [
+                    "Everyone's jumping on the bandwagon of sustainable living.",
+                    "Many companies jumped on the bandwagon when remote work became popular.",
+                    "Don't just jump on the bandwagon - make your own decisions."
+                ]
+            },
+            {
+                expression: "Miss the boat",
+                meaning: "To miss an opportunity; to be too late to take advantage of something.",
+                examples: [
+                    "If you don't apply soon, you'll miss the boat on this job opportunity.",
+                    "We missed the boat on investing in that company.",
+                    "Don't miss the boat - the sale ends today!"
+                ]
+            },
+            {
+                expression: "Not rocket science",
+                meaning: "Not difficult to understand or do; quite simple.",
+                examples: [
+                    "Using this app is not rocket science - anyone can do it.",
+                    "It's not rocket science, just follow the instructions.",
+                    "Cooking pasta is not rocket science."
+                ]
+            },
+            {
+                expression: "Read between the lines",
+                meaning: "To understand the hidden or implied meaning rather than just the literal words.",
+                examples: [
+                    "You need to read between the lines of his email - he's not happy.",
+                    "Reading between the lines, I think they're planning to sell the company.",
+                    "She didn't say it directly, but if you read between the lines, she's interested."
+                ]
+            },
+            {
+                expression: "Steal someone's thunder",
+                meaning: "To take attention or praise away from someone by doing what they planned to do first.",
+                examples: [
+                    "Don't announce your news at her party - you'll steal her thunder!",
+                    "He stole my thunder by presenting my idea before I could.",
+                    "I didn't mean to steal your thunder with my announcement."
+                ]
+            },
+            {
+                expression: "Take with a pinch of salt",
+                meaning: "To be skeptical about something; to not believe something entirely.",
+                examples: [
+                    "Take his stories with a pinch of salt - he tends to exaggerate.",
+                    "You should take those statistics with a pinch of salt.",
+                    "I take everything I read on social media with a pinch of salt."
+                ]
+            },
+            {
+                expression: "The last straw",
+                meaning: "The final problem in a series of problems that makes you unable to accept a situation anymore.",
+                examples: [
+                    "Missing my birthday was the last straw - I broke up with him.",
+                    "That rude email was the last straw; I'm quitting.",
+                    "The broken promise was the last straw for the investors."
+                ]
+            },
+            {
+                expression: "Tip of the iceberg",
+                meaning: "A small visible part of a much larger problem or situation.",
+                examples: [
+                    "These complaints are just the tip of the iceberg.",
+                    "The financial issues we see are only the tip of the iceberg.",
+                    "What's been reported is just the tip of the iceberg."
+                ]
+            },
+            {
+                expression: "Get the ball rolling",
+                meaning: "To start something; to begin a process or activity.",
+                examples: [
+                    "Let's get the ball rolling on this project.",
+                    "I'll send the first email to get the ball rolling.",
+                    "We need someone to get the ball rolling on planning the event."
+                ]
+            },
+            {
+                expression: "In the same boat",
+                meaning: "In the same difficult situation as someone else.",
+                examples: [
+                    "We're all in the same boat - we all have tight deadlines.",
+                    "Don't worry, we're in the same boat with the budget cuts.",
+                    "If the company fails, we're all in the same boat."
+                ]
+            },
+            {
+                expression: "Keep your eyes peeled",
+                meaning: "To watch carefully for something; to be alert and observant.",
+                examples: [
+                    "Keep your eyes peeled for any spelling errors in the document.",
+                    "Keep your eyes peeled for the exit - it's easy to miss.",
+                    "I'll keep my eyes peeled for any good deals."
+                ]
+            },
+            {
+                expression: "Make a long story short",
+                meaning: "To tell something briefly, leaving out details.",
+                examples: [
+                    "To make a long story short, we got lost and arrived two hours late.",
+                    "Let me make a long story short - the project failed.",
+                    "Making a long story short, I decided to accept the job offer."
+                ]
+            },
+            {
+                expression: "No pain, no gain",
+                meaning: "You have to work hard or suffer to achieve something worthwhile.",
+                examples: [
+                    "I'm sore from the workout, but no pain, no gain!",
+                    "Learning a new language is hard, but no pain, no gain.",
+                    "It's tough now, but remember - no pain, no gain."
+                ]
+            },
+            {
+                expression: "On the same page",
+                meaning: "To have the same understanding or opinion about something.",
+                examples: [
+                    "Let's meet to make sure we're all on the same page.",
+                    "I think we're on the same page about the project goals.",
+                    "Are we on the same page about the deadline?"
+                ]
+            },
+            {
+                expression: "Par for the course",
+                meaning: "What is normal or expected in a particular situation.",
+                examples: [
+                    "Delays are par for the course with this airline.",
+                    "Technical issues on launch day are par for the course.",
+                    "Complaints from that client are par for the course."
+                ]
+            },
+            {
+                expression: "Pull someone's leg",
+                meaning: "To joke with or tease someone in a playful way.",
+                examples: [
+                    "I'm just pulling your leg - I didn't really sell your car!",
+                    "Are you serious or just pulling my leg?",
+                    "He loves pulling people's legs with outrageous stories."
+                ]
+            },
+            {
+                expression: "Get cold feet",
+                meaning: "To become nervous or anxious about something you planned to do, often leading to hesitation or withdrawal.",
+                examples: [
+                    "He got cold feet about the presentation and almost canceled.",
+                    "Many couples get cold feet before their wedding.",
+                    "Don't get cold feet now - you've prepared well for this!"
+                ]
+            },
+            {
+                expression: "Actions speak louder than words",
+                meaning: "What you do is more important and shows your true intentions better than what you say.",
+                examples: [
+                    "He says he'll help, but actions speak louder than words.",
+                    "Don't just promise to change - actions speak louder than words.",
+                    "She proved that actions speak louder than words by volunteering every week."
+                ]
+            }
+        ];
+
+        // ==================== STATE ====================
+        let currentIndex = 0;
+        let learnedExpressions = new Set();
+        let streak = 0;
+        let lastVisitDate = null;
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            loadFromLocalStorage();
+            updateStreak();
+            currentIndex = getDailyExpressionIndex();
+            displayExpression(currentIndex);
+            updateProgressBar();
+            setupEventListeners();
+        }
+
+        // ==================== LOCAL STORAGE ====================
+        function loadFromLocalStorage() {
+            const stored = localStorage.getItem('expressionAppData');
+            if (stored) {
+                const data = JSON.parse(stored);
+                learnedExpressions = new Set(data.learned || []);
+                streak = data.streak || 0;
+                lastVisitDate = data.lastVisit || null;
+            }
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                learned: Array.from(learnedExpressions),
+                streak: streak,
+                lastVisit: getTodayString()
+            };
+            localStorage.setItem('expressionAppData', JSON.stringify(data));
+        }
+
+        // ==================== DATE FUNCTIONS ====================
+        function getTodayString() {
+            const today = new Date();
+            return today.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+
+        function getFormattedDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date().toLocaleDateString('en-US', options);
+        }
+
+        function getDailyExpressionIndex() {
+            // Calculate days since epoch
+            const today = new Date();
+            const epoch = new Date('2024-01-01');
+            const daysSinceEpoch = Math.floor((today - epoch) / (1000 * 60 * 60 * 24));
+            return daysSinceEpoch % expressions.length;
+        }
+
+        function updateStreak() {
+            const today = getTodayString();
+
+            if (!lastVisitDate) {
+                streak = 1;
+            } else if (lastVisitDate !== today) {
+                const lastDate = new Date(lastVisitDate);
+                const currentDate = new Date(today);
+                const diffTime = currentDate - lastDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    streak++;
+                } else if (diffDays > 1) {
+                    streak = 1;
+                }
+            }
+
+            lastVisitDate = today;
+            saveToLocalStorage();
+
+            const streakNum = document.querySelector('.streak-number');
+            const streakDisplay = document.getElementById('streakDisplay');
+            streakNum.textContent = streak;
+
+            if (streak === 1) {
+                streakDisplay.innerHTML = `🔥 <span class="streak-number">${streak}</span> day streak`;
+            } else {
+                streakDisplay.innerHTML = `🔥 <span class="streak-number">${streak}</span> day streak`;
+            }
+        }
+
+        // ==================== DISPLAY FUNCTIONS ====================
+        function displayExpression(index) {
+            const expr = expressions[index];
+
+            document.getElementById('dateDisplay').textContent = getFormattedDate();
+            document.getElementById('expressionText').textContent = expr.expression;
+            document.getElementById('meaningText').textContent = expr.meaning;
+
+            const examplesContainer = document.getElementById('examplesContainer');
+            examplesContainer.innerHTML = '';
+            expr.examples.forEach(example => {
+                const div = document.createElement('div');
+                div.className = 'example';
+                div.textContent = example;
+                examplesContainer.appendChild(div);
+            });
+
+            // Update learned button state
+            const learnedBtn = document.getElementById('learnedBtn');
+            if (learnedExpressions.has(index)) {
+                learnedBtn.textContent = 'Learned ✓';
+                learnedBtn.disabled = true;
+            } else {
+                learnedBtn.textContent = 'Mark as Learned ✓';
+                learnedBtn.disabled = false;
+            }
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === expressions.length - 1;
+        }
+
+        function updateProgressBar() {
+            const learned = learnedExpressions.size;
+            const total = expressions.length;
+            const percentage = (learned / total) * 100;
+
+            document.getElementById('learnedCount').textContent = `${learned} expression${learned !== 1 ? 's' : ''} learned`;
+            document.getElementById('totalCount').textContent = `${total} total`;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+        }
+
+        // ==================== EVENT HANDLERS ====================
+        function setupEventListeners() {
+            // Learned button
+            document.getElementById('learnedBtn').addEventListener('click', () => {
+                learnedExpressions.add(currentIndex);
+                saveToLocalStorage();
+                displayExpression(currentIndex);
+                updateProgressBar();
+            });
+
+            // Review later button
+            document.getElementById('reviewBtn').addEventListener('click', () => {
+                alert('This expression will appear again tomorrow! Keep learning! 📚');
+            });
+
+            // Navigation
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    displayExpression(currentIndex);
+                }
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (currentIndex < expressions.length - 1) {
+                    currentIndex++;
+                    displayExpression(currentIndex);
+                }
+            });
+
+            // Settings modal
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                document.getElementById('settingsModal').classList.add('active');
+
+                // Load saved time preference
+                const savedTime = localStorage.getItem('notificationTime') || '09:00';
+                document.getElementById('notificationTime').value = savedTime;
+            });
+
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('settingsModal').classList.remove('active');
+            });
+
+            document.getElementById('saveSettings').addEventListener('click', () => {
+                const time = document.getElementById('notificationTime').value;
+                localStorage.setItem('notificationTime', time);
+                document.getElementById('settingsModal').classList.remove('active');
+                alert(`Settings saved! Daily reminder set for ${time} ✓`);
+            });
+
+            // Enable notifications
+            document.getElementById('enableNotifications').addEventListener('click', async () => {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        new Notification('Daily Expression', {
+                            body: 'Notifications enabled! You\'ll receive daily reminders to learn new expressions.',
+                            icon: '📚'
+                        });
+                    }
+                } else {
+                    alert('Your browser doesn\'t support notifications.');
+                }
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('settingsModal').addEventListener('click', (e) => {
+                if (e.target.id === 'settingsModal') {
+                    document.getElementById('settingsModal').classList.remove('active');
+                }
+            });
+        }
+
+        // ==================== START APP ====================
+        init();
+    </script>
+</body>
+</html>
