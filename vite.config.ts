@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-base: '/daily-expression/'
+
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/daily-expression/',
   plugins: [react(), tailwindcss()],
 })
