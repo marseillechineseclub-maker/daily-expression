@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, Card, Select } from '../ui';
 import { MultipleChoice, FillInBlank, QuizProgress, QuizResult } from '../quiz';
 import { useQuiz } from '../../hooks/useQuiz';
+import { useSRS } from '../../hooks/useSRS';
+import { useApp } from '../../context/AppContext';
 import { expressions, categories } from '../../data/expressions';
 import type { QuizType, Category } from '../../types';
 
@@ -10,6 +12,7 @@ interface QuizScreenProps {
 }
 
 export function QuizScreen({ onBack }: QuizScreenProps) {
+  const { learnedIds } = useApp();
   const {
     session,
     settings,
@@ -19,20 +22,47 @@ export function QuizScreen({ onBack }: QuizScreenProps) {
     endQuiz,
     getCurrentQuestion,
     getResults,
-  } = useQuiz(expressions);
+    quizHistory,
+  } = useQuiz(expressions, learnedIds);
+
+  const { reviewCard } = useSRS(learnedIds);
 
   const [questionCount, setQuestionCount] = useState(settings.questionCount.toString());
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [selectedTypes, setSelectedTypes] = useState<QuizType[]>(['multiple-choice', 'fill-in-blank']);
+  const [onlyLearned, setOnlyLearned] = useState(false);
+  const [srsUpdatedCount, setSrsUpdatedCount] = useState(0);
+
+  const hasProcessedResults = useRef(false);
 
   const currentQuestion = getCurrentQuestion();
   const results = getResults();
+
+  // Process SRS updates when quiz completes
+  useEffect(() => {
+    if (session?.isComplete && !hasProcessedResults.current) {
+      hasProcessedResults.current = true;
+      let count = 0;
+      session.questions.forEach((q) => {
+        if (learnedIds.includes(q.expressionId)) {
+          reviewCard(q.expressionId, q.isCorrect ? 'good' : 'again');
+          count++;
+        }
+      });
+      setSrsUpdatedCount(count);
+    }
+    if (!session) {
+      hasProcessedResults.current = false;
+      setSrsUpdatedCount(0);
+    }
+  }, [session, learnedIds, reviewCard]);
 
   const handleStart = () => {
     startQuiz({
       questionCount: parseInt(questionCount, 10),
       categories: selectedCategory === 'All' ? 'All' : [selectedCategory],
       quizTypes: selectedTypes,
+      includeOnlyLearned: onlyLearned,
     });
   };
 
@@ -44,6 +74,11 @@ export function QuizScreen({ onBack }: QuizScreenProps) {
     } else {
       setSelectedTypes([...selectedTypes, type]);
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   // Quiz setup screen
@@ -99,6 +134,28 @@ export function QuizScreen({ onBack }: QuizScreenProps) {
               />
             </div>
 
+            {/* Only Learned toggle */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Only Learned Expressions
+              </label>
+              <button
+                onClick={() => setOnlyLearned(!onlyLearned)}
+                className={`w-full p-3 rounded-xl border-2 transition-colors ${
+                  onlyLearned
+                    ? 'border-accent-primary bg-accent-light'
+                    : 'border-gray-200'
+                }`}
+              >
+                <span className="block text-sm font-medium">
+                  {onlyLearned ? 'On — Quiz only learned expressions' : 'Off — Quiz all expressions'}
+                </span>
+              </button>
+              {onlyLearned && learnedIds.length === 0 && (
+                <p className="mt-2 text-sm text-amber-600">No expressions learned yet</p>
+              )}
+            </div>
+
             {/* Question types */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -132,6 +189,26 @@ export function QuizScreen({ onBack }: QuizScreenProps) {
               Start Quiz
             </Button>
           </Card>
+
+          {/* Recent Scores */}
+          {quizHistory.length > 0 && (
+            <Card className="mt-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Recent Scores</h3>
+              <div className="space-y-2">
+                {quizHistory.slice(-3).reverse().map((entry, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm"
+                  >
+                    <span className="text-gray-500">{formatDate(entry.date)}</span>
+                    <span className="font-medium text-gray-800">
+                      {entry.score}/{entry.total} ({entry.percentage}%)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     );
@@ -155,6 +232,13 @@ export function QuizScreen({ onBack }: QuizScreenProps) {
             onBack();
           }}
         />
+        {srsUpdatedCount > 0 && (
+          <div className="max-w-2xl mx-auto mt-4">
+            <p className="text-center text-sm text-green-700 bg-green-50 rounded-xl p-3">
+              Updated {srsUpdatedCount} SRS intervals based on your performance
+            </p>
+          </div>
+        )}
       </div>
     );
   }

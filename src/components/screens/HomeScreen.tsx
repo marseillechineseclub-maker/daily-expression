@@ -4,8 +4,18 @@ import { ExpressionCard, CategoryFilter } from '../expression';
 import { WelcomeBackModal } from './WelcomeBackModal';
 import { useApp } from '../../context/AppContext';
 import { useSRS } from '../../hooks/useSRS';
+import { useAchievements } from '../../hooks/useAchievements';
 import { getFormattedDate, getTodayString } from '../../utils/date';
+import { getDaysUntilReview } from '../../services/srsAlgorithm';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import type { DailyChallengeRecord } from './DailyChallengeScreen';
+
+interface QuizHistoryEntry {
+  date: string;
+  score: number;
+  total: number;
+  percentage: number;
+}
 
 export function HomeScreen() {
   const {
@@ -26,7 +36,7 @@ export function HomeScreen() {
     learnedIds,
   } = useApp();
 
-  const { getDueCount, initializeCard } = useSRS(learnedIds);
+  const { getDueCount, initializeCard, srsData } = useSRS(learnedIds);
   const dueCount = getDueCount();
 
   const [showCongrats, setShowCongrats] = useState(false);
@@ -36,6 +46,54 @@ export function HomeScreen() {
     ''
   );
   const hasCheckedWelcome = useRef(false);
+
+  // Daily challenge tracking
+  const [dailyChallenge] = useLocalStorage<DailyChallengeRecord | null>(
+    'daily-expression-daily-challenge',
+    null
+  );
+  const todayCompleted = dailyChallenge?.date === getTodayString();
+
+  // Quiz history for achievements
+  const [quizHistory] = useLocalStorage<QuizHistoryEntry[]>(
+    'daily-expression-quiz-history',
+    []
+  );
+
+  // Review forecast
+  const dueToday = learnedIds.filter(
+    (id) => srsData[id] && getDaysUntilReview(srsData[id]) <= 0
+  ).length;
+  const dueTomorrow = learnedIds.filter(
+    (id) => srsData[id] && getDaysUntilReview(srsData[id]) === 1
+  ).length;
+  const dueThisWeek = learnedIds.filter(
+    (id) =>
+      srsData[id] &&
+      getDaysUntilReview(srsData[id]) >= 2 &&
+      getDaysUntilReview(srsData[id]) <= 7
+  ).length;
+
+  // Achievements
+  const totalReviews = learnedIds.filter(
+    (id) => srsData[id]?.lastReviewDate !== null && srsData[id]?.lastReviewDate !== undefined
+  ).length;
+  const hasPerfectQuiz = quizHistory.some((entry) => entry.percentage === 100);
+
+  const { unlockedAchievements, newlyUnlocked, clearNewlyUnlocked } = useAchievements({
+    learnedCount: learnedIds.length,
+    currentStreak: streak.current,
+    totalReviews,
+    hasPerfectQuiz,
+  });
+
+  // Auto-dismiss achievement toast
+  useEffect(() => {
+    if (newlyUnlocked) {
+      const timer = setTimeout(() => clearNewlyUnlocked(), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [newlyUnlocked, clearNewlyUnlocked]);
 
   // Update streak on mount
   useEffect(() => {
@@ -131,6 +189,7 @@ export function HomeScreen() {
         userName={user?.name}
         streak={streak.current}
         progress={progress}
+        onProgressClick={() => setScreen('progress')}
         onSettingsClick={() => setScreen('settings')}
       />
 
@@ -183,7 +242,55 @@ export function HomeScreen() {
               </span>
             )}
           </button>
+          <button
+            onClick={() => setScreen('daily-challenge')}
+            className="px-6 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center gap-2 relative"
+          >
+            <span className="text-xl">⚡</span>
+            <span className="font-medium text-gray-700">Daily Challenge</span>
+            {todayCompleted && (
+              <span className="absolute -top-2 -right-2 bg-success text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                ✓
+              </span>
+            )}
+          </button>
         </div>
+
+        {/* Achievements badges */}
+        {unlockedAchievements.length > 0 && (
+          <div className="flex justify-center gap-2 mt-4">
+            {unlockedAchievements.map((a) => (
+              <span
+                key={a.id}
+                title={`${a.title}: ${a.desc}`}
+                className="text-2xl cursor-default"
+              >
+                {a.emoji}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Review forecast */}
+        {learnedIds.length > 0 && (
+          <div className="flex justify-center gap-3 mt-4">
+            <span
+              className={`text-sm px-3 py-1 rounded-full ${
+                dueToday > 0
+                  ? 'bg-red-100 text-red-600'
+                  : 'bg-green-100 text-green-600'
+              }`}
+            >
+              {dueToday} today
+            </span>
+            <span className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-500">
+              {dueTomorrow} tomorrow
+            </span>
+            <span className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-500">
+              {dueThisWeek} this week
+            </span>
+          </div>
+        )}
       </main>
 
       {/* Congratulations overlay */}
@@ -213,6 +320,17 @@ export function HomeScreen() {
           dueCount={dueCount}
           onClose={() => setShowWelcomeBack(false)}
         />
+      )}
+
+      {/* Achievement toast */}
+      {newlyUnlocked && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 z-50 animate-in slide-in-from-bottom duration-300">
+          <span className="text-3xl">{newlyUnlocked.emoji}</span>
+          <div>
+            <p className="font-bold text-gray-800">Achievement Unlocked!</p>
+            <p className="text-sm text-gray-600">{newlyUnlocked.title}: {newlyUnlocked.desc}</p>
+          </div>
+        </div>
       )}
     </div>
   );

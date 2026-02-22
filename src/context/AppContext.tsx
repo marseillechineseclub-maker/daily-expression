@@ -2,10 +2,24 @@ import type { ReactNode } from 'react';
 import { createContext, useContext, useState, useCallback } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { expressions } from '../data/expressions';
-import type { Category, UserData, StreakData } from '../types';
+import type { Category, UserData, StreakData, QuizType } from '../types';
 import { getTodayString, getDailyExpressionIndex, isYesterday, isSameDay } from '../utils/date';
 
-type Screen = 'welcome' | 'home' | 'quiz' | 'review' | 'progress' | 'settings';
+type Screen = 'welcome' | 'home' | 'quiz' | 'review' | 'progress' | 'settings' | 'daily-challenge';
+
+export interface UserPreferences {
+  dailyGoal: number;
+  defaultQuizCount: number;
+  defaultQuizCategory: Category | 'All';
+  defaultQuizTypes: QuizType[];
+}
+
+const DEFAULT_PREFERENCES: UserPreferences = {
+  dailyGoal: 3,
+  defaultQuizCount: 10,
+  defaultQuizCategory: 'All',
+  defaultQuizTypes: ['multiple-choice', 'fill-in-blank'],
+};
 
 interface AppState {
   // User data
@@ -14,8 +28,12 @@ interface AppState {
 
   // Expression state
   learnedIds: string[];
+  learnedDates: Record<string, string>;
   selectedCategory: Category | 'All';
   currentIndex: number;
+
+  // Preferences
+  preferences: UserPreferences;
 
   // Navigation
   currentScreen: Screen;
@@ -32,6 +50,9 @@ interface AppContextValue extends AppState {
   isLearned: (id: string) => boolean;
   setCategory: (category: Category | 'All') => void;
   setCurrentIndex: (index: number) => void;
+
+  // Preferences
+  setPreferences: (prefs: UserPreferences) => void;
 
   // Navigation
   setScreen: (screen: Screen) => void;
@@ -53,9 +74,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     lastVisit: '',
   });
   const [learnedIds, setLearnedIds] = useLocalStorage<string[]>('daily-expression-learned', []);
+  const [learnedDates, setLearnedDates] = useLocalStorage<Record<string, string>>(
+    'daily-expression-learned-dates',
+    {}
+  );
   const [selectedCategory, setSelectedCategory] = useLocalStorage<Category | 'All'>(
     'daily-expression-category',
     'All'
+  );
+  const [preferences, setPreferencesStorage] = useLocalStorage<UserPreferences>(
+    'daily-expression-preferences',
+    DEFAULT_PREFERENCES
   );
 
   // Local state
@@ -116,11 +145,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Expression actions
   const markAsLearned = useCallback((id: string) => {
     setLearnedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
-  }, [setLearnedIds]);
+    setLearnedDates((prev) => ({ ...prev, [id]: getTodayString() }));
+  }, [setLearnedIds, setLearnedDates]);
 
   const markAsUnlearned = useCallback((id: string) => {
     setLearnedIds((prev) => prev.filter((learnedId) => learnedId !== id));
-  }, [setLearnedIds]);
+    setLearnedDates((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  }, [setLearnedIds, setLearnedDates]);
 
   const isLearned = useCallback(
     (id: string) => learnedIds.includes(id),
@@ -135,6 +170,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [setSelectedCategory]
   );
 
+  const setPreferences = useCallback(
+    (prefs: UserPreferences) => {
+      setPreferencesStorage(prefs);
+    },
+    [setPreferencesStorage]
+  );
+
   const setScreen = useCallback((screen: Screen) => {
     setCurrentScreen(screen);
   }, []);
@@ -144,9 +186,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     user,
     streak,
     learnedIds,
+    learnedDates,
     selectedCategory,
     currentIndex,
     currentScreen,
+    preferences,
 
     // User actions
     setUser,
@@ -158,6 +202,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     isLearned,
     setCategory,
     setCurrentIndex,
+
+    // Preferences
+    setPreferences,
 
     // Navigation
     setScreen,

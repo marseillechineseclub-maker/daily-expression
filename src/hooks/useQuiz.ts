@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 import type { QuizSession, QuizSettings, QuizQuestion, Expression } from '../types';
 import { generateQuiz, checkAnswer } from '../services/quizGenerator';
 
@@ -9,16 +10,32 @@ const DEFAULT_SETTINGS: QuizSettings = {
   includeOnlyLearned: false,
 };
 
-export function useQuiz(expressions: Expression[]) {
+export interface QuizHistoryEntry {
+  date: string;
+  score: number;
+  total: number;
+  percentage: number;
+}
+
+export function useQuiz(expressions: Expression[], learnedIds: string[] = []) {
   const [session, setSession] = useState<QuizSession | null>(null);
   const [settings, setSettings] = useState<QuizSettings>(DEFAULT_SETTINGS);
+  const [quizHistory, setQuizHistory] = useLocalStorage<QuizHistoryEntry[]>(
+    'daily-expression-quiz-history',
+    []
+  );
 
   const startQuiz = useCallback(
     (customSettings?: Partial<QuizSettings>) => {
       const mergedSettings = { ...settings, ...customSettings };
       setSettings(mergedSettings);
 
-      const questions = generateQuiz(expressions, mergedSettings);
+      // Filter to only learned expressions if the toggle is on
+      const pool = mergedSettings.includeOnlyLearned
+        ? expressions.filter((e) => learnedIds.includes(e.id))
+        : expressions;
+
+      const questions = generateQuiz(pool, mergedSettings);
 
       setSession({
         questions,
@@ -29,7 +46,7 @@ export function useQuiz(expressions: Expression[]) {
         completedAt: null,
       });
     },
-    [expressions, settings]
+    [expressions, learnedIds, settings]
   );
 
   const submitAnswer = useCallback((answer: string) => {
@@ -65,6 +82,19 @@ export function useQuiz(expressions: Expression[]) {
     const nextIndex = session.currentIndex + 1;
     const isComplete = nextIndex >= session.questions.length;
 
+    if (isComplete) {
+      // Save to quiz history
+      const score = session.score;
+      const total = session.questions.length;
+      const entry: QuizHistoryEntry = {
+        date: new Date().toISOString(),
+        score,
+        total,
+        percentage: Math.round((score / total) * 100),
+      };
+      setQuizHistory((prev) => [...prev, entry].slice(-10));
+    }
+
     setSession((prev) =>
       prev
         ? {
@@ -75,7 +105,7 @@ export function useQuiz(expressions: Expression[]) {
           }
         : null
     );
-  }, [session]);
+  }, [session, setQuizHistory]);
 
   const endQuiz = useCallback(() => {
     setSession(null);
@@ -107,5 +137,6 @@ export function useQuiz(expressions: Expression[]) {
     endQuiz,
     getCurrentQuestion,
     getResults,
+    quizHistory,
   };
 }
